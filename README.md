@@ -1,0 +1,94 @@
+annotation包下
+    AccessLimit: 
+        注解类,作用于Controller,保证接口防刷限流;
+        属性用于限制最大访问次数和时间;
+    ApiIdempotent:
+        在需要保证 接口幂等性 的Controller的方法上使用此注解;
+common包下
+    Constant:
+        Redis基础配置类,配置过期时间;
+        Log日志类型记录登录登出;
+        MsgLogStatus邮件发送状态记录;
+    ResponseCode:
+        枚举类，分系统模块、通用模块、用户模块等记录状态码与响应信息；
+    ServerResponse：
+        服务器状态类，记录服务器运行状态、信息和数据;
+config包下
+    JedisConfig：
+        jedis操作redis配置类，生成池对象JedisPoll
+    RabbitConfig：
+        配置RedisTemplate，设置消息转换器Jackson2JsonMessageConverter；
+            ConfirmCallback回调接口判断消息是否发送成功；
+            setMandatory回调接口，失败时不会丢掉信息；
+            setReturnCallback消息通过Exchange失败后的回调方法；
+            logUserQueue使用的队列名称；
+            logUserExchange使用的交换协议、通道；
+            logUserBinding绑定策略；
+            mailQueue邮件队列；
+            mailExchange邮件协议；
+            mailBinding邮件通道绑定；
+    RedissonConfig：
+        redis服务器连接配置；
+exception包下：
+    自定义全局处理异常类：
+        MyControllerAdvice：
+            serviceExceptionHandler处理ServiceException声明的异常；
+            exceptionHandler整体异常处理器，返回服务器异常信息；
+        ServiceException：
+            业务逻辑异常处理，属性为状态码和异常信息；
+interceptor包下:
+    拦截器配置：
+        AccessLimitInterceptor接口防刷限流拦截器：
+            preHandle，在请求前进行拦截，通过HandlerMethod对象获取访问的方法，获取AccessLimit注解信息，check方法设置具体的访问细节，以redis保存并判断访问次数和设置时间
+        ApiIdempotentInterceptor接口幂等性拦截器：
+            preHandle，在请求前进行拦截，获取ApiIdempotent注解信息，通过TokenService校验token信息；
+util包下：
+    ConfigUtil：加载读取配置信息
+    IpUtil：
+        getIpAddress：获取客户端真实ip地址；
+    JedisUtil：jedis操作redis
+        set：设值，方法重载，设置key，value，（过期时间）；
+        get：取值；
+        del：删除key；
+        exists：判断key是否存在；
+        expire：设值key过期时间；
+        ttl：获取剩余时间；
+        close：关闭连接；
+    JodaTimeUtil：时间操作转换
+        dateToStr：date类型 -> string类型；
+        strToDate：string类型 -> date类型；
+        isTimeExpired：判断date日期是否过期(与当前时刻比较)；
+        isBeforeNow:判断timeStr是否在当前时刻之前;
+        plusDays：日期加天数；
+        minusDays：日期减天数；
+        plusOrMinusDays：加减天数；
+        plusMinutes：日期加分钟；
+        minusMinutes：日期减分钟；
+        isBetweenStartAndEndTime：判断target是否在开始和结束时间之间；
+    JsonUtil：
+        json转换处理；
+    RandomUtil随即UUID生成工具：
+        UUID32：生成32位随即数；
+        UUID36：生成64位随机数；
+        generateStr：生成包含大、小写字母、数字的字符串；
+        generateDigitalStr：生成纯数字字符串；
+        generateLetterStr：生成只包含大小写字母的字符串；
+        generateLowerStr：生成只包含小写字母的字符串；
+        generateStrWithZero：根据数字生成字符串，长度不够前面补0；
+    RegexUtil正则解析工具类：
+        isMobile：校验手机号
+        isEmail：校验邮箱地址
+        isChinese：解析中文，验证身份证
+        isIDCard：解析id
+        isUrl：验证URL
+        isIPAddr：验证IP地址
+TestApplication启动类，解决跨域访问以及开启拦截器：   
+    corsFilter：跨域过滤器；
+    addInterceptors：
+        接口幂等性拦截器apiIdempotentInterceptor()；
+        接口防刷限流拦截器accessLimitInterceptor()；
+        
+        
+                
+            
+            
